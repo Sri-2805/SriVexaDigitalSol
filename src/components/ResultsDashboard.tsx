@@ -28,7 +28,8 @@ import {
   Wand2,
   PhoneCall,
   MessageCircle,
-  HelpCircle
+  HelpCircle,
+  FileSpreadsheet
 } from 'lucide-react';
 import { generateAuditPDF } from '../utils/pdfGenerator';
 import { generateAIMetaTags, improveAICopy } from '../services/api';
@@ -37,12 +38,14 @@ interface ResultsDashboardProps {
   report: AuditReport;
   onReAnalyze: (url: string) => void;
   onRequestService: (serviceName?: string) => void;
+  onOpenGoogleSheets?: () => void;
 }
 
 export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
   report,
   onReAnalyze,
-  onRequestService
+  onRequestService,
+  onOpenGoogleSheets
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'issues' | 'ai-tools' | 'conversion' | 'technical' | 'plan' | 'competitors'>('overview');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -136,24 +139,34 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
               )}
             </div>
 
-            {/* Actions: Download PDF & Re-Analyze */}
-            <div className="flex items-center gap-3 shrink-0">
+            {/* Actions: Download PDF, Google Sheets & Re-Analyze */}
+            <div className="flex items-center gap-2.5 flex-wrap shrink-0">
               <button
                 id="results-reanalyze-btn"
                 onClick={() => onReAnalyze(report.websiteUrl)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border border-slate-200/80 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border border-slate-200/80 cursor-pointer"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>Re-Analyze Website</span>
+                <span>Re-Analyze</span>
+              </button>
+
+              <button
+                id="results-export-sheets-btn"
+                onClick={onOpenGoogleSheets}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-colors border border-emerald-300 cursor-pointer shadow-xs"
+                title="Export comprehensive audit to Google Sheets (Drive & Sheets API)"
+              >
+                <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                <span>Google Sheets</span>
               </button>
 
               <button
                 id="results-download-pdf-btn"
                 onClick={() => generateAuditPDF(report)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white transition-all shadow-sm hover:shadow cursor-pointer"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white transition-all shadow-sm hover:shadow cursor-pointer"
               >
                 <Download className="w-4 h-4 text-teal-300" />
-                <span>Download PDF Report</span>
+                <span>Download PDF</span>
               </button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ShieldCheck, User, BarChart3, ArrowRight } from 'lucide-react';
+import { Sparkles, ShieldCheck, User, BarChart3, ArrowRight, FileSpreadsheet } from 'lucide-react';
 import { UserAccount } from '../types';
 
 interface NavbarProps {
@@ -8,6 +8,7 @@ interface NavbarProps {
   onOpenAuthModal: () => void;
   onOpenAdminModal: () => void;
   onOpenHistoryModal: () => void;
+  onOpenGoogleSheets: () => void;
   currentUser: UserAccount | null;
   onLogout: () => void;
 }
@@ -18,6 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAuthModal,
   onOpenAdminModal,
   onOpenHistoryModal,
+  onOpenGoogleSheets,
   currentUser,
   onLogout
 }) => {
@@ -85,14 +87,25 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Right CTAs */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           
+          {/* Google Sheets Hub */}
+          <button
+            id="nav-sheets-btn"
+            onClick={onOpenGoogleSheets}
+            title="Google Sheets & Drive Integration"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors border border-emerald-200 cursor-pointer shadow-2xs"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="hidden sm:inline">Google Sheets</span>
+          </button>
+
           {/* Admin shortcut */}
           <button
             id="nav-admin-btn"
             onClick={onOpenAdminModal}
             title="SriVexa Founder & Admin Panel"
-            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200"
+            className="hidden md:inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
             <span>Admin</span>

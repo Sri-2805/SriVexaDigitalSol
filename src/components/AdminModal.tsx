@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { X, Users, Activity, Globe, Award, Mail, PhoneCall, AlertTriangle, RefreshCw } from 'lucide-react';
+import { X, Users, Activity, Globe, Award, Mail, PhoneCall, AlertTriangle, RefreshCw, FileSpreadsheet } from 'lucide-react';
 import { AdminStats } from '../types';
 import { getAdminStats } from '../services/api';
 
 interface AdminModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenGoogleSheets?: () => void;
 }
 
-export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
+export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose, onOpenGoogleSheets }) => {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -132,11 +133,24 @@ export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
               </div>
             </div>
 
-            {/* Founder Quick Note */}
-            <div className="bg-teal-50/70 p-4 rounded-xl border border-teal-200/80 text-xs text-teal-900 flex items-start justify-between">
+            {/* Founder Quick Note & Google Sheets Sync */}
+            <div className="bg-teal-50/70 p-4 rounded-xl border border-teal-200/80 text-xs text-teal-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <strong>SriVexa Digital Growth Pipeline:</strong> 18 new leads acquired this week for SEO Site Audits (₹300) and Website Development (₹3,000).
               </div>
+              {onOpenGoogleSheets && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenGoogleSheets();
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition-colors shrink-0 cursor-pointer"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-200" />
+                  <span>Sync Leads to Google Sheets</span>
+                </button>
+              )}
             </div>
 
           </div>

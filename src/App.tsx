@@ -17,10 +17,12 @@ import { LeadModal } from './components/LeadModal';
 import { AuthModal } from './components/AuthModal';
 import { AdminModal } from './components/AdminModal';
 import { AuditHistoryModal } from './components/AuditHistoryModal';
+import { GoogleSheetsModal } from './components/GoogleSheetsModal';
 import { Footer } from './components/Footer';
 import { AuditReport, AuditHistoryItem, UserAccount } from './types';
 import { benchmarkReport, mockAuditHistory } from './data/mockAudits';
 import { runWebsiteAudit } from './services/api';
+import { initAuth, logoutGoogle } from './services/googleAuth';
 
 export default function App() {
   const [report, setReport] = useState<AuditReport | null>(null);
@@ -36,6 +38,34 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isGoogleSheetsModalOpen, setIsGoogleSheetsModalOpen] = useState(false);
+
+  useEffect(() => {
+    // Listen to Google Auth state
+    const unsubscribe = initAuth((user) => {
+      setCurrentUser(prev => {
+        if (prev) return prev;
+        return {
+          id: user.uid,
+          email: user.email || 'user@example.com',
+          name: user.displayName || user.email?.split('@')[0] || 'User',
+          plan: 'pro',
+          createdAt: new Date().toISOString().split('T')[0]
+        };
+      });
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logoutGoogle();
+    } catch {}
+    setCurrentUser(null);
+  };
 
   const scrollToSection = (sectionId: string) => {
     const el = document.getElementById(sectionId);
@@ -119,8 +149,9 @@ export default function App() {
         onOpenAuthModal={() => setIsAuthModalOpen(true)}
         onOpenAdminModal={() => setIsAdminModalOpen(true)}
         onOpenHistoryModal={() => setIsHistoryModalOpen(true)}
+        onOpenGoogleSheets={() => setIsGoogleSheetsModalOpen(true)}
         currentUser={currentUser}
-        onLogout={() => setCurrentUser(null)}
+        onLogout={handleLogout}
       />
 
       <main className="flex-1">
@@ -137,6 +168,7 @@ export default function App() {
             report={report}
             onReAnalyze={(url) => handleStartAudit(url)}
             onRequestService={handleRequestService}
+            onOpenGoogleSheets={() => setIsGoogleSheetsModalOpen(true)}
           />
         )}
 
@@ -196,6 +228,7 @@ export default function App() {
       <AdminModal
         isOpen={isAdminModalOpen}
         onClose={() => setIsAdminModalOpen(false)}
+        onOpenGoogleSheets={() => setIsGoogleSheetsModalOpen(true)}
       />
 
       <AuditHistoryModal
@@ -203,6 +236,16 @@ export default function App() {
         onClose={() => setIsHistoryModalOpen(false)}
         history={history}
         onSelectAudit={handleSelectAuditFromHistory}
+      />
+
+      <GoogleSheetsModal
+        isOpen={isGoogleSheetsModalOpen}
+        onClose={() => setIsGoogleSheetsModalOpen(false)}
+        currentReport={report}
+        onAuditUrlFromSheet={(url) => {
+          setIsGoogleSheetsModalOpen(false);
+          handleStartAudit(url);
+        }}
       />
 
     </div>
