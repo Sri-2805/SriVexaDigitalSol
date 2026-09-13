@@ -1,0 +1,6 @@
+{
+  "name": "SriVexa AI Website Growth Auditor",
+  "description": "Find what’s holding your website back — and get an AI-powered plan to fix it. SEO, performance, content, and conversion website growth audits by SriVexa Digital.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
